@@ -31,8 +31,6 @@ Real-Time Features	Flask-SocketIO, WebSockets
 Hosting (optional)	Netlify (Frontend), Flask (Backend)
 ⚙️ Installation & Setup
 1. Clone the repository
-git clone https://github.com/yourusername/stylesync.git
-cd stylesync
 
 2. Create a virtual environment
 python -m venv venv
@@ -61,7 +59,6 @@ mydb = mysql.connector.connect(
     password="your_password",
     database="stylesync"
 )
-
 
 Then import your .sql schema into MySQL.
 
