@@ -12,8 +12,6 @@ Each interaction rewards stylists with points, creating a system that blends cre
 
 🛍️ User Interface – Users can browse looks, view tagged items, and shop via integrated product links.
 
-💬 Real-Time Chat – Enables seamless communication between users and stylists.
-
 🪙 Reward System – Stylists earn points whenever users engage with their tagged products.
 
 🔐 Secure Login/Signup – Separate authentication for stylists and users.
