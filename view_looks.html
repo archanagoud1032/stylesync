@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View Looks - StyleSync</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #e6e1f8;
+      margin: 0;
+      padding: 0 30px 50px;
+      color: #3e2f8a;
+      user-select: none;
+    }
+
+    header {
+      background-color: #4b399e;
+      padding: 30px 50px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(75, 57, 158, 0.6);
+      margin-bottom: 50px;
+      user-select: none;
+      border-radius: 0 0 20px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-weight: 800;
+      font-size: 3rem;
+      letter-spacing: 4px;
+      color: #e9e7ff;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    #looks-list {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .look-container {
+      margin-bottom: 55px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 12px 28px rgba(75, 57, 158, 0.22);
+      padding: 30px 35px;
+      transition: box-shadow 0.35s ease;
+    }
+
+    .look-container:hover {
+      box-shadow: 0 16px 40px rgba(75, 57, 158, 0.38);
+    }
+
+    .look-container h2 {
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #3e2f8a;
+      letter-spacing: 0.8px;
+    }
+
+    .look-image-container {
+      position: relative;
+      max-width: 620px;
+      margin: 0 auto;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 3px solid #6d5fc2;
+      box-shadow: 0 7px 20px rgba(109, 95, 194, 0.35);
+      background: #f0efff;
+    }
+
+    .look-image {
+      width: 100%;
+      display: block;
+      border-radius: 14px;
+    }
+
+    .tag {
+      position: absolute;
+      background: rgba(109, 95, 194, 0.9);
+      color: #f0efff;
+      padding: 7px 12px;
+      border-radius: 14px;
+      font-size: 15px;
+      cursor: pointer;
+      white-space: nowrap;
+      transform: translate(-50%, -110%);
+      text-decoration: underline;
+      box-shadow: 0 5px 15px rgba(109, 95, 194, 0.6);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      z-index: 11;
+    }
+
+    .tag:hover {
+      background-color: #8a83d3;
+      color: #222;
+      box-shadow: 0 8px 22px rgba(109, 95, 194, 0.9);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>StyleSync Looks</h1>
+  </header>
+
+  <div id="looks-list">
+    {% for look in looks %}
+      <div class="look-container">
+        <h2>{{ look.title }}</h2>
+        <div class="look-image-container" data-stylist-id="{{ look.stylist_id }}">
+          <img
+            src="{{ look.image_url }}"
+            alt="{{ look.title }}"
+            class="look-image"
+            data-tags='{{ look.tags | tojson }}'
+          />
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <script>
+    window.addEventListener('load', () => {
+      document.querySelectorAll('.look-image').forEach(imgEl => {
+        const tags = JSON.parse(imgEl.getAttribute('data-tags'));
+        addTags(imgEl, tags);
+      });
+    });
+
+    function addTags(imgEl, tags) {
+      const container = imgEl.parentElement;
+      const stylistId = container.getAttribute('data-stylist-id');
+      const scaleX = imgEl.width / imgEl.naturalWidth;
+      const scaleY = imgEl.height / imgEl.naturalHeight;
+
+      tags.forEach(tag => {
+        if (tag.x < 0 || tag.x > imgEl.naturalWidth || tag.y < 0 || tag.y > imgEl.naturalHeight) {
+          console.warn('Tag coordinates out of bounds:', tag);
+          return;
+        }
+
+        const displayX = tag.x * scaleX;
+        const displayY = tag.y * scaleY;
+
+        const tagEl = document.createElement('span');
+        tagEl.className = 'tag';
+        tagEl.style.left = `${displayX}px`;
+        tagEl.style.top = `${displayY}px`;
+        tagEl.textContent = tag.tag;
+        tagEl.title = tag.link;
+
+        tagEl.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.location.href = `/buy/${tag.id}`;
+        });
+
+        container.appendChild(tagEl);
+      });
+    }
+  </script>
+
+</body>
+</html>

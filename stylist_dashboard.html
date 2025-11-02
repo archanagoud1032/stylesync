@@ -1,0 +1,173 @@
+<!-- templates/stylist_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stylist Dashboard - StyleSync</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #e6e1f8;
+      color: #3e2f8a;
+      margin: 0;
+      padding: 30px 40px 50px;
+      user-select: none;
+    }
+    header {
+      background-color: #4b399e;
+      padding: 35px 50px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(75, 57, 158, 0.6);
+      border-radius: 0 0 20px 20px;
+      margin-bottom: 50px;
+      user-select: none;
+    }
+    header h1 {
+      margin: 0;
+      font-weight: 800;
+      font-size: 3rem;
+      color: #e9e7ff;
+      letter-spacing: 4px;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+      user-select: text;
+    }
+
+    .points {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.6rem;
+      margin: 15px 0 40px;
+      color: #6d5fc2;
+      user-select: text;
+    }
+
+    .looks-container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .look-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 12px 28px rgba(75, 57, 158, 0.22);
+      padding: 25px 35px;
+      margin-bottom: 40px;
+      user-select: text;
+      transition: box-shadow 0.3s ease;
+    }
+    .look-card:hover {
+      box-shadow: 0 16px 40px rgba(75, 57, 158, 0.38);
+    }
+
+    .look-card h3 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      color: #3e2f8a;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+    }
+
+    .look-image {
+      max-width: 320px;
+      width: 100%;
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(109, 95, 194, 0.4);
+      display: block;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+
+    ul.tags-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin-bottom: 0;
+      color: #5a4f8b;
+    }
+    ul.tags-list li {
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      user-select: text;
+    }
+    ul.tags-list li a {
+      color: #6d5fc2;
+      text-decoration: none;
+      font-weight: 700;
+      margin-left: 8px;
+      transition: color 0.3s ease;
+    }
+    ul.tags-list li a:hover {
+      color: #4b399e;
+      text-decoration: underline;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 40px 0;
+    }
+
+    .no-looks {
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+      font-size: 1.3rem;
+      color: #7b75b8;
+      font-weight: 600;
+      user-select: text;
+    }
+
+    .logout-btn {
+      display: block;
+      width: max-content;
+      margin: 40px auto 0;
+      padding: 12px 28px;
+      background-color: #4b399e;
+      color: #e9e7ff;
+      font-weight: 700;
+      text-align: center;
+      border-radius: 25px;
+      text-decoration: none;
+      box-shadow: 0 5px 15px rgba(75, 57, 158, 0.5);
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .logout-btn:hover {
+      background-color: #3e2f8a;
+      box-shadow: 0 8px 20px rgba(75, 57, 158, 0.8);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Welcome, {{ username }}!</h1>
+</header>
+
+<p class="points">Your Points: {{ points }}</p>
+
+<div class="looks-container">
+  {% if looks %}
+    {% for look in looks %}
+      <div class="look-card">
+        <h3>{{ look.title }}</h3>
+        <img src="{{ look.image_url }}" alt="{{ look.title }}" class="look-image" />
+        <ul class="tags-list">
+          {% for tag in look.tags %}
+            <li>
+              {{ tag.tag }} (X: {{ tag.x }}, Y: {{ tag.y }}) - 
+              <a href="{{ tag.link }}" target="_blank" rel="noopener noreferrer">Buy</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="no-looks">You haven't created any looks yet.</p>
+  {% endif %}
+</div>
+
+<a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+
+</body>
+</html>

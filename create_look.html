@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Look</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: #CBC3E3;
+      color: #222;
+      padding: 20px 40px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+    }
+    main {
+      flex-grow: 1;
+      padding: 40px 20px;
+      max-width: 800px;
+      margin: auto;
+      text-align: center;
+    }
+    form {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin: 15px 0 5px;
+    }
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 25px;
+      padding: 12px 25px;
+      background-color: #CBC3E3;
+      border: none;
+      color: #333;
+      font-weight: 600;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #b0a9ce;
+    }
+    #image-container {
+      position: relative;
+      max-width: 600px;
+      margin: 20px auto 0;
+    }
+    #look-image {
+      width: 100%;
+      display: none;
+      user-select: none;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+    .tag {
+      position: absolute;
+      background: rgba(203, 195, 227, 0.85);
+      color: #222;
+      padding: 3px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      user-select: none;
+      transform: translate(-50%, -100%);
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    footer {
+      background-color: #CBC3E3;
+      color: #333;
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Create New Look</h1>
+</header>
+
+<main>
+  <form id="lookForm" method="POST" enctype="multipart/form-data">
+    <label>Look Title:</label>
+    <input type="text" name="title" required />
+
+    <label>Upload Look Image:</label>
+    <input type="file" id="imageInput" name="image" accept="image/*" required />
+
+    <div id="image-container">
+      <img id="look-image" src="#" alt="Look Preview" />
+    </div>
+
+    <input type="hidden" name="tags_data" id="tags_data" value="[]" />
+
+    <button type="submit">Save Look</button>
+  </form>
+</main>
+
+<footer>
+  &copy; {{ current_year or 2025 }} StyleSync. All rights reserved.
+</footer>
+
+<script>
+  const imageInput = document.getElementById('imageInput');
+  const lookImage = document.getElementById('look-image');
+  const imageContainer = document.getElementById('image-container');
+  const tagsDataInput = document.getElementById('tags_data');
+
+  let tags = [];
+
+  imageInput.onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    tags = [];
+    removeAllTags();
+    tagsDataInput.value = JSON.stringify(tags);
+
+    const url = URL.createObjectURL(file);
+    lookImage.src = url;
+    lookImage.style.display = 'block';
+  };
+
+  lookImage.onclick = function(event) {
+    if (!lookImage.src) return;
+
+    const rect = lookImage.getBoundingClientRect();
+    const scaleX = lookImage.naturalWidth / lookImage.width;
+    const scaleY = lookImage.naturalHeight / lookImage.height;
+
+    const x = Math.round((event.clientX - rect.left) * scaleX);
+    const y = Math.round((event.clientY - rect.top) * scaleY);
+
+    const tagName = prompt("Enter product name/tag:");
+    if (!tagName) return;
+
+    const tagLink = prompt("Enter product link (URL):");
+    if (!tagLink) return;
+
+    const tagObj = { x, y, tag: tagName, link: tagLink };
+    tags.push(tagObj);
+
+    addTagElement(x, y, tagName);
+    tagsDataInput.value = JSON.stringify(tags);
+  };
+
+  function addTagElement(x, y, text) {
+    const scaleX = lookImage.width / lookImage.naturalWidth;
+    const scaleY = lookImage.height / lookImage.naturalHeight;
+
+    const displayX = x * scaleX;
+    const displayY = y * scaleY;
+
+    const tagEl = document.createElement('div');
+    tagEl.classList.add('tag');
+    tagEl.style.left = displayX + 'px';
+    tagEl.style.top = displayY + 'px';
+    tagEl.innerText = text;
+
+    imageContainer.appendChild(tagEl);
+  }
+
+  function removeAllTags() {
+    const existingTags = document.querySelectorAll('.tag');
+    existingTags.forEach(tag => tag.remove());
+  }
+</script>
+
+</body>
+</html>

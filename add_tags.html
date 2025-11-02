@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Add Tags - StyleSync</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      user-select: none;
+    }
+
+    h1 {
+      color: #5a4f8b;
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 30px;
+      letter-spacing: 1.5px;
+    }
+
+    .image-container {
+      position: relative;
+      max-width: 700px;
+      margin: 0 auto 30px;
+      border: 3px solid #CBC3E3;
+      border-radius: 12px;
+      box-shadow: 0 6px 14px rgba(124, 110, 191, 0.3);
+      background: white;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    .image-container img {
+      width: 100%;
+      display: block;
+      border-radius: 12px;
+      user-select: none;
+    }
+
+    .tag-marker {
+      position: absolute;
+      background: rgba(203, 195, 227, 0.9);
+      color: #333;
+      padding: 4px 8px;
+      font-size: 13px;
+      border-radius: 8px;
+      transform: translate(-50%, -100%);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(124, 110, 191, 0.5);
+      cursor: default;
+      white-space: nowrap;
+      user-select: text;
+      transition: background-color 0.3s ease;
+      z-index: 10;
+    }
+    .tag-marker:hover {
+      background-color: #bfb8e1;
+      color: #1a1a1a;
+      box-shadow: 0 4px 14px rgba(124, 110, 191, 0.8);
+    }
+
+    button {
+      display: block;
+      margin: 0 auto;
+      background-color: #CBC3E3;
+      color: #3e2f8a;
+      font-weight: 700;
+      border: none;
+      padding: 14px 40px;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(124, 110, 191, 0.5);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      user-select: none;
+    }
+    button:hover {
+      background-color: #a79de1;
+      color: #241e50;
+      box-shadow: 0 8px 18px rgba(124, 110, 191, 0.7);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tag products for: {{ title }}</h1>
+
+  <div class="image-container" onclick="handleImageClick(event)">
+    <img id="lookImage" src="{{ url_for('static', filename='uploads/' + image) }}" alt="Look Image">
+    <div id="tags-container"></div>
+  </div>
+
+  <button onclick="submitTags()">Save Tags</button>
+
+  <script>
+    let tags = [];
+
+    function handleImageClick(e) {
+      const img = document.getElementById('lookImage');
+      const rect = img.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / img.width) * img.naturalWidth;
+      const y = ((e.clientY - rect.top) / img.height) * img.naturalHeight;
+
+      const tagLabel = prompt("Enter product name:");
+      if (!tagLabel) return;
+      const tagLink = prompt("Enter product link:");
+      if (!tagLink) return;
+
+      tags.push({ x, y, tag: tagLabel, link: tagLink });
+
+      const tagEl = document.createElement('div');
+      tagEl.className = 'tag-marker';
+      tagEl.style.left = ((x / img.naturalWidth) * 100) + '%';
+      tagEl.style.top = ((y / img.naturalHeight) * 100) + '%';
+      tagEl.innerText = tagLabel;
+
+      document.getElementById('tags-container').appendChild(tagEl);
+    }
+
+    function submitTags() {
+      fetch(location.pathname, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tags })
+      }).then(res => {
+        if (res.ok) {
+          alert("Tags saved!");
+          window.location.href = "/view_looks";
+        } else {
+          alert("Error saving tags.");
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
