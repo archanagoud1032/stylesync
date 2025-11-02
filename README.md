@@ -1,5 +1,5 @@
 # stylesync
-🪞 StyleSync – Fashion Styling & E-Commerce Integration Platform
+🅰️ StyleSync – Fashion Styling & E-Commerce Integration Platform
 🌸 Overview
 
 StyleSync is a web-based fashion styling platform that connects stylists and users in an interactive, community-driven environment.
